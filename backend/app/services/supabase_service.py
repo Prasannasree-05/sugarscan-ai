@@ -7,22 +7,31 @@ The service-role key bypasses RLS — only used server-side.
 Install: pip install supabase
 """
 from typing import Any, Dict, Optional
-from supabase import create_client, Client
+from supabase import create_client, Client, ClientOptions
 from app.config import settings
+from contextvars import ContextVar
 
 _client: Optional[Client] = None
+request_token: ContextVar[str] = ContextVar("request_token", default="")
 
 
 def get_supabase() -> Client:
-    """Return a cached Supabase admin client."""
-    global _client
-    if _client is None:
-        if not settings.SUPABASE_URL or not settings.SUPABASE_SERVICE_KEY:
-            raise RuntimeError(
-                "SUPABASE_URL and SUPABASE_SERVICE_KEY must be set in backend/.env"
-            )
-        _client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY)
-    return _client
+    """Return a Supabase client. If a request_token is set, returns an authenticated client."""
+    token = request_token.get()
+    
+    if not settings.SUPABASE_URL or not settings.SUPABASE_SERVICE_KEY:
+        raise RuntimeError(
+            "SUPABASE_URL and SUPABASE_SERVICE_KEY must be set in backend/.env"
+        )
+        
+    if not token:
+        global _client
+        if _client is None:
+            _client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY)
+        return _client
+        
+    options = ClientOptions(headers={"Authorization": f"Bearer {token}"})
+    return create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_KEY, options=options)
 
 
 # ── Meal Scans ─────────────────────────────────────────────────────────────────

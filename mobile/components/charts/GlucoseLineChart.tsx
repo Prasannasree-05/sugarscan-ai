@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import { CartesianChart, Line, Area, useChartPressState } from 'victory-native';
 import { LinearGradient, vec } from '@shopify/react-native-skia';
 import { GlucoseReading } from '../../types';
@@ -12,6 +12,14 @@ interface GlucoseLineChartProps {
 }
 
 export function GlucoseLineChart({ readings, targetMin, targetMax, height = 220 }: GlucoseLineChartProps) {
+  if (Platform.OS === 'web') {
+    return (
+      <View style={{ height, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16 }}>
+        <Text style={{ color: 'rgba(255,255,255,0.5)' }}>Interactive Chart Available on Mobile</Text>
+      </View>
+    );
+  }
+
   // Need at least 2 points to draw a line. If we don't have enough, show empty state.
   if (!readings || readings.length < 2) {
     return (

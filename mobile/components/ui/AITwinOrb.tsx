@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, ViewStyle } from 'react-native';
+import { View, ViewStyle, Platform } from 'react-native';
 import {
   Canvas,
   Circle,
@@ -44,6 +44,12 @@ interface Props {
  *   - All driven by Reanimated shared values → Skia animated props
  */
 export function AITwinOrb({ state, moodColor, size = 200, style }: Props) {
+  if (Platform.OS === 'web') {
+    return (
+      <View style={[{ width: size, height: size, borderRadius: size/2, backgroundColor: moodColor, opacity: 0.8 }, style]} />
+    );
+  }
+
   const c = size / 2;
   const coreR = useSharedValue(size * 0.22);      // core orb radius
   const ringR = useSharedValue(size * 0.38);      // ring radius

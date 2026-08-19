@@ -7,7 +7,7 @@ from app.schemas.user import UserResponse
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
-from app.services.supabase_service import get_supabase
+from app.services.supabase_service import get_supabase, request_token
 
 async def get_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
@@ -18,6 +18,10 @@ async def get_current_user(
             detail="Not authenticated",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    
+    # Set the token for the current request context so get_supabase() uses it
+    request_token.set(credentials.credentials)
+    
     try:
         sb = get_supabase()
         user_response = sb.auth.get_user(credentials.credentials)
@@ -57,6 +61,9 @@ async def optional_current_user(
 ) -> Optional[UserResponse]:
     if credentials is None:
         return None
+        
+    request_token.set(credentials.credentials)
+    
     try:
         sb = get_supabase()
         user_response = sb.auth.get_user(credentials.credentials)
@@ -88,6 +95,9 @@ async def get_ws_user(
     if not token:
         await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
         return None
+        
+    request_token.set(token)
+    
     try:
         sb = get_supabase()
         user_response = sb.auth.get_user(token)

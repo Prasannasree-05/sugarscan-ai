@@ -5,10 +5,12 @@ import { COLORS } from '../../../theme/tokens';
 import { CameraView } from '../../../components/scanner/CameraView';
 import { AnalyzingOverlay } from '../../../components/scanner/AnalyzingOverlay';
 import { useScanner } from '../../../hooks/useScanner';
+import { useCamera } from '../../../hooks/useCamera';
 
 export default function ScanScreen() {
   const router = useRouter();
   const { phase, submitScan, error, resetScan, capturedImageUri } = useScanner();
+  const { pickFromGallery } = useCamera();
 
   // Handle errors
   useEffect(() => {
@@ -37,11 +39,11 @@ export default function ScanScreen() {
     submitScan(uri);
   };
 
-  const handleGallery = () => {
-    // Gallery picker logic would go here.
-    // Assuming useCamera hook provides pickFromGallery, you'd call it here
-    // and pass the result to submitScan(uri).
-    alert("Gallery integration pending in this simplified version.");
+  const handleGallery = async () => {
+    const uri = await pickFromGallery();
+    if (uri) {
+      submitScan(uri);
+    }
   };
 
   return (

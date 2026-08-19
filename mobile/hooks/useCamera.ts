@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import { Platform } from 'react-native';
 import { Camera, CameraType, FlashMode } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -27,9 +28,11 @@ export function useCamera() {
       { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
     );
     
-    const info = await FileSystem.getInfoAsync(result.uri);
-    if (!info.exists || !('size' in info) || info.size < 1000) {
-      throw new Error('Captured image appears to be empty or corrupted — please try again.');
+    if (Platform.OS !== 'web') {
+      const info = await FileSystem.getInfoAsync(result.uri);
+      if (!info.exists || !('size' in info) || info.size < 1000) {
+        throw new Error('Captured image appears to be empty or corrupted — please try again.');
+      }
     }
     
     return result.uri;

@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import model_validator
 import json
 
 
@@ -12,9 +13,11 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    ENVIRONMENT: str = "development"
+
 
     # JWT
-    SECRET_KEY: str
+    SECRET_KEY: str = "development_secret_key_change_me_in_production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
@@ -36,7 +39,7 @@ class Settings(BaseSettings):
     MAX_IMAGE_SIZE_MB: int = 10
 
     # CORS
-    ALLOWED_ORIGINS: str = '["http://localhost:8081","exp://192.168.1.100:8081","https://Niranjan6699.github.io"]'
+    ALLOWED_ORIGINS: str = '["http://localhost:8081","http://localhost:8082","http://localhost:3000","exp://192.168.1.100:8081","https://Niranjan6699.github.io"]'
 
     @property
     def allowed_origins_list(self) -> List[str]:
@@ -54,6 +57,12 @@ class Settings(BaseSettings):
     @property
     def max_image_bytes(self) -> int:
         return self.MAX_IMAGE_SIZE_MB * 1024 * 1024
+
+    @model_validator(mode='after')
+    def validate_production_secret(self):
+        if self.ENVIRONMENT == "production" and self.SECRET_KEY == "development_secret_key_change_me_in_production":
+            raise RuntimeError("You must change the SECRET_KEY in production environment!")
+        return self
 
 
 settings = Settings()

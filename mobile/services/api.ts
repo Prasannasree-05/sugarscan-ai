@@ -125,12 +125,17 @@ export const scanAPI = {
         : imageUri;
 
     const formData = new FormData();
-    formData.append('image', {
-      uri: normalizedUri,
-      name: 'scan.jpg',
-      type: 'image/jpeg'
-    } as any);
-    
+    if (Platform.OS === 'web') {
+      const imgResponse = await fetch(normalizedUri);
+      const blob = await imgResponse.blob();
+      formData.append('image', blob, 'scan.jpg');
+    } else {
+      formData.append('image', {
+        uri: normalizedUri,
+        name: 'scan.jpg',
+        type: 'image/jpeg'
+      } as any);
+    }
     // Native fetch avoids Axios Network Errors with FormData on Android React Native
     const token = useAuthStore.getState().accessToken;
     const response = await fetch(`${API_URL}/api/v1/scans/`, {
