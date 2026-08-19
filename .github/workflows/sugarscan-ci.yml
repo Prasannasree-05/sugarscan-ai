@@ -118,7 +118,7 @@ jobs:
       - name: Run Pytest E2E against real Droplet
         # Ensuring 90% pass rate requirement could be done natively with pytest plugins or scripts
         run: |
-          pytest backend/tests/e2e --junitxml=junit.xml || echo "Faking pytest run" > junit.xml
+          pytest backend/tests/e2e --junitxml=junit.xml
       - name: Generate Reports
         run: |
           mkdir -p "Vulnerability Test Results"
