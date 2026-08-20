@@ -182,6 +182,12 @@ export default function ConversationScreen() {
       }
     } catch (err) {
       console.error('Failed to start recording', err);
+      // Generate a temporary message ID for the error
+      const errorMsgId = Date.now().toString();
+      setMessages(prev => [
+        ...prev, 
+        { id: errorMsgId, role: 'user', content: '⚠️ Microphone access denied or unavailable. Please check your browser/device settings.' }
+      ]);
     }
   };
 

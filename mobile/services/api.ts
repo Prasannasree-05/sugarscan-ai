@@ -284,11 +284,16 @@ export const chatAPI = {
   
   transcribeAudio: async (uri: string): Promise<string> => {
     const formData = new FormData();
-    const filename = uri.split('/').pop() || 'audio.m4a';
-    const match = /\.(\w+)$/.exec(filename);
-    const type = match ? `audio/${match[1]}` : 'audio/m4a';
 
-    formData.append('file', { uri, name: filename, type } as any);
+    if (Platform.OS === 'web') {
+      const blob = await (await fetch(uri)).blob();
+      formData.append('file', blob, 'recording.webm');
+    } else {
+      const filename = uri.split('/').pop() || 'audio.m4a';
+      const match = /\.(\w+)$/.exec(filename);
+      const type = match ? `audio/${match[1]}` : 'audio/m4a';
+      formData.append('file', { uri, name: filename, type } as any);
+    }
 
     const res = await apiClient.post('/chat/transcribe', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
