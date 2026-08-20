@@ -63,27 +63,17 @@ function SendButton({ onPress, enabled }: { onPress: () => void; enabled: boolea
   );
 }
 
-function MicButton({ isRecording, onStart, onStop }: { isRecording: boolean; onStart: () => void; onStop: () => void }) {
+function MicButton({ isRecording, onToggle }: { isRecording: boolean; onToggle: () => void }) {
   const scale = useSharedValue(1);
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
+  const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
-  const handlePressIn = () => {
-    scale.value = withSpring(0.85, { stiffness: 400, damping: 20 });
-    onStart();
-  };
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { stiffness: 400, damping: 20 });
-    onStop();
+  const handlePress = () => {
+    scale.value = withSpring(isRecording ? 1 : 0.85, { stiffness: 400, damping: 20 });
+    onToggle();
   };
 
   return (
-    <TouchableOpacity
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      activeOpacity={1}
-    >
+    <TouchableOpacity onPress={handlePress} activeOpacity={1}>
       <Animated.View style={[
         styles.sendButton,
         { backgroundColor: isRecording ? COLORS.danger : COLORS.bgCard },
@@ -232,8 +222,12 @@ export default function ConversationScreen() {
           }, 100);
 
         } catch (e) {
-          console.error(e);
-          setMessages(prev => prev.filter(m => m.id !== userMsgId));
+          console.error('Transcription failed:', e);
+          setMessages(prev => prev.map(m =>
+            m.id === userMsgId
+              ? { ...m, content: '⚠️ Could not transcribe — check your connection and try again.' }
+              : m
+          ));
           setIsStreaming(false);
         }
       }
@@ -297,7 +291,11 @@ export default function ConversationScreen() {
         setMessages(prev => {
           const finalMsg = prev.find(m => m.id === assistantId);
           if (finalMsg && finalMsg.content) {
-            Speech.speak(finalMsg.content, { rate: 0.9, pitch: 1.0 });
+            Speech.speak(finalMsg.content, { 
+              rate: 0.9, 
+              pitch: 1.0,
+              onDone: () => startRecording(),
+            });
           }
           return prev;
         });
@@ -334,11 +332,11 @@ export default function ConversationScreen() {
           >
             <ArrowLeft size={ICON_SM} color={COLORS.textPrimary} strokeWidth={2} />
           </TouchableOpacity>
-          <AITwinOrb state={isStreaming ? 'thinking' : 'idle'} moodColor={activeMoodColor} size={40} />
+          <AITwinOrb state={isRecording ? 'listening' : isStreaming ? 'thinking' : 'idle'} moodColor={activeMoodColor} size={40} />
           <View>
             <Text style={styles.headerTitle}>AI Twin</Text>
             <Text style={styles.headerStatus}>
-              {isStreaming ? 'Thinking...' : 'Online'}
+              {isRecording ? 'Listening...' : isStreaming ? 'Thinking...' : 'Online'}
             </Text>
           </View>
         </View>
@@ -426,7 +424,7 @@ export default function ConversationScreen() {
           {input.trim() ? (
             <SendButton onPress={() => sendMessage()} enabled={!isStreaming} />
           ) : (
-            <MicButton isRecording={isRecording} onStart={startRecording} onStop={stopRecording} />
+            <MicButton isRecording={isRecording} onToggle={() => isRecording ? stopRecording() : startRecording()} />
           )}
         </View>
       </KeyboardAvoidingView>

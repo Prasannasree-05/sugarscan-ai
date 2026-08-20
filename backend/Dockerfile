@@ -6,9 +6,9 @@
 
 FROM python:3.11-slim
 
-# System deps for Pillow / image processing
+# System deps for Pillow / image processing / Whisper audio extraction
 RUN apt-get update && apt-get install -y \
-    libpq-dev gcc libffi-dev \
+    libpq-dev gcc libffi-dev ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
