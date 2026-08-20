@@ -57,7 +57,7 @@ export default function OnboardingScreen() {
         const { error: healthError } = await supabase.from('health_profiles').upsert({
           user_id: user.id,
           allergies: dietary_restrictions,
-        });
+        }, { onConflict: 'user_id' });
         if (healthError) throw healthError;
       }
       
