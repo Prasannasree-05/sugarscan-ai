@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { Home, History, Scan, Brain, User } from 'lucide-react-native';
 import { useLiveUpdates } from '../../../hooks/useLiveUpdates';
 import { COLORS, RADII, SHADOWS } from '../../../theme/tokens';
-import { MiniAssistantBubble } from '../../../components/ui/MiniAssistantBubble';
 
 const TAB_ICON_SIZE = 22;
 const SCAN_ICON_SIZE = 26;
@@ -72,8 +71,6 @@ export default function TabLayout() {
         />
       </Tabs>
 
-      {/* Global floating assistant bubble — lives above all tab content */}
-      <MiniAssistantBubble />
     </>
   );
 }

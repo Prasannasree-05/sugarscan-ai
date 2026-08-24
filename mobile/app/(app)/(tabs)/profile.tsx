@@ -17,14 +17,6 @@ import { GlassCard } from '../../../components/ui/GlassCard';
 import { SectionLabel } from '../../../components/ui/SectionLabel';
 import { EmptyState } from '../../../components/ui/EmptyState';
 
-const HEALTH_MENU = [
-  { icon: Heart, label: 'Health Profile', desc: 'Medical history, conditions', color: COLORS.danger, nav: '/(app)/health-profile' },
-  { icon: Pill, label: 'Medications', desc: 'Current prescriptions & schedule', color: COLORS.neon, nav: '/(app)/medications' },
-  { icon: Utensils, label: 'Meal History', desc: 'Past scans & nutrition log', color: COLORS.warning, nav: '/(app)/(tabs)/history' },
-  { icon: BarChart3, label: 'Data & Reports', desc: 'Weekly analytics, Export', color: COLORS.info, nav: '/(app)/reports' },
-  { icon: Activity, label: 'Activity Log', desc: 'Steps, exercise & movement', color: '#B39DDB', nav: '/(app)/activity' },
-];
-
 
 
 export default function ProfileScreen() {
@@ -139,15 +131,7 @@ export default function ProfileScreen() {
            </ScrollView>
         </Animated.View>
 
-        {/* Health & Data Menu */}
-        <Animated.View entering={FadeInUp.delay(400).springify().stiffness(280).damping(26)} style={styles.sectionContainer}>
-           <SectionLabel icon={<Heart size={12} color={COLORS.danger} />}>Health & Data</SectionLabel>
-           <GlassCard elevation={2} style={styles.menuCard}>
-              {HEALTH_MENU.map((m, i) => (
-                <MenuRow key={m.label} item={m} isLast={i === HEALTH_MENU.length - 1} router={router} />
-              ))}
-           </GlassCard>
-        </Animated.View>
+
 
 
 

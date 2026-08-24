@@ -39,7 +39,7 @@ class Settings(BaseSettings):
     MAX_IMAGE_SIZE_MB: int = 10
 
     # CORS
-    ALLOWED_ORIGINS: str = '["http://localhost:8081","http://localhost:8082","http://localhost:3000","exp://192.168.1.100:8081","https://Niranjan6699.github.io"]'
+    ALLOWED_ORIGINS: str = '["http://localhost:8081","http://localhost:8082","http://localhost:8083","http://localhost:3000","exp://192.168.1.100:8081","https://Niranjan6699.github.io"]'
 
     @property
     def allowed_origins_list(self) -> List[str]:

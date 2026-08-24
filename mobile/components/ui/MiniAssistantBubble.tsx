@@ -89,7 +89,6 @@ export function MiniAssistantBubble() {
         <View style={styles.bubbleInner}>
           <MessageCircle size={26} color={COLORS.textOnLime} strokeWidth={2.5} />
         </View>
-        <View style={styles.pulseDot} />
       </RNAnimated.View>
 
       <AssistantBottomSheet visible={sheetOpen} onClose={() => setSheetOpen(false)} />
@@ -113,16 +112,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     ...SHADOWS.limeButtonGlow,
-  },
-  pulseDot: {
-    position: 'absolute',
-    top: 2,
-    right: 2,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: COLORS.danger,
-    borderWidth: 2,
-    borderColor: COLORS.bgPage,
   },
 });

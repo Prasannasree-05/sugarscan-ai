@@ -24,6 +24,8 @@ export function CameraView({ onCapture, onGallery }: CameraViewProps) {
       <View style={styles.permissionContainer}>
         <Text style={styles.permissionText}>We need your permission to show the camera</Text>
         <NeonButton onPress={requestPermission}>Grant Permission</NeonButton>
+        <View style={{ height: 16 }} />
+        <NeonButton onPress={onGallery}>Upload from Gallery</NeonButton>
       </View>
     );
   }

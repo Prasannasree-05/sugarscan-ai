@@ -305,7 +305,7 @@ export default function DashboardScreen() {
                   </View>
                   <Text style={styles.actionText}>AI Twin</Text>
                 </GlassCard>
-                <GlassCard elevation={1} style={styles.actionCard} onPress={() => {}}>
+                <GlassCard elevation={1} style={styles.actionCard} onPress={() => router.push('/(app)/conversation' as any)}>
                   <View style={[styles.actionIconBg, { backgroundColor: COLORS.infoDim }]}>
                     <Mic size={18} color={COLORS.info} strokeWidth={2} />
                   </View>
